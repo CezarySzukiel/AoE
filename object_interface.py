@@ -1,10 +1,15 @@
 from abc import abstractmethod, ABC
 
+from metacomponents import ObjectInterfaceMeta
 
-class ObjectInterface(ABC):
+
+class ObjectInterface(ABC, metaclass=ObjectInterfaceMeta):
     """
     Base interface for all objects
     """
+    # def __init__(self, position: tuple[int, int] = (0, 0), area: tuple[int, int] = (1, 1)):
+    #     self._position = position
+    #     self._area = area
 
     @abstractmethod
     def position(self) -> tuple[int, int]:
@@ -20,6 +25,9 @@ class WalkableInterface(ObjectInterface):
     Interface for all walkable objects.
     Use this to give units the ability to walk around this object.
     """
+    # def __init__(self):
+    #     super().__init__()
+    #     self._walkability = True
 
     @property
     @abstractmethod
@@ -33,6 +41,9 @@ class SwimableInterface(ObjectInterface):
     Interface for all swimable objects.
     Use this to give units the ability to swim around this object.
     """
+    # def __init__(self):
+    #     super().__init__()
+    #     self._swimability = True
 
     @property
     @abstractmethod
@@ -45,6 +56,9 @@ class InteractableObjectInterface(ObjectInterface):
     """
     Interface for all interactable objects
     """
+    # def __init__(self):
+    #     super().__init__()
+    #     self._interactable = True
 
     @property
     @abstractmethod
@@ -53,10 +67,15 @@ class InteractableObjectInterface(ObjectInterface):
         pass
 
 
-class LifeObjectInterface(ObjectInterface):
+class LifeObjectInterface(InteractableObjectInterface):
     """
     Base interface for all living objects
     """
+    # def __init__(self, max_health: int, health: int, player: str):
+    #     super().__init__()
+    #     self._health = health
+    #     self._max_health = max_health
+    #     self._player = player
 
     @property
     @abstractmethod
@@ -86,6 +105,10 @@ class MobileObjectInterface(LifeObjectInterface):
     """
     Base interface for all mobile objects
     """
+    # def __init__(self, speed: float, direction: str):
+    #     super().__init__()
+    #     self._speed = speed
+    #     self._direction = direction
 
     @property
     @abstractmethod
@@ -131,6 +154,10 @@ class ResourceInterface(ObjectInterface):
     """
     interface for all resources
     """
+    # def __init__(self, resource_amount: int, resource_type: str):
+    #     super().__init__()
+    #     self._resource_amount = resource_amount
+    #     self._resource_type = resource_type
 
     @property
     @abstractmethod

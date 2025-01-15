@@ -15,6 +15,7 @@ class Tower(LifeObjectComponent, CombatComponent):
         self.attack_range = combat.attack_range
 
 
+
 barracks = Barracks()
 tower = Tower()
 tower.attack(barracks)

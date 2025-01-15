@@ -1,4 +1,5 @@
-from interface import *
+import inspect
+from object_interface import *
 
 
 class ObjectComponent(ObjectInterface):
@@ -207,5 +208,24 @@ class CombatComponent(CombatInterface):
         print(f"Attacking {target}")
         target.take_damage(self.damage)
         return target
+
+    def defend(self, damage):
+        print(f"Defending from {damage} damage")
+        self.take_damage(damage)
+        return self.health
+
+
+print(issubclass(ResourceComponent, ABC))
+print(ResourceComponent.__mro__)
+print(inspect.isabstract(ResourceComponent))
+print(inspect.isabstract(ResourceInterface))
+
+print("*-" * 50)
+print(ResourceInterface.resource_amount.__isabstractmethod__)
+print(ResourceInterface.get_gathered.__dict__)
+print(CombatComponent.attack.__dict__)
+
+print("*-" * 50)
+
 
 
