@@ -1,75 +1,7 @@
-from abc import ABC
+from surfaces import Surface
 
 
-class Surface(ABC):
-    """
-    Surface like ground, or water
-    """
-
-    def __init__(self, walkability: bool, swimability: bool, position_x: int | None = None, position_y: int | None = None):
-        self.walkability = walkability
-        self.swimability = swimability
-        self.position_x = position_x
-        self.position_y = position_y
-
-
-class Ground(Surface):
-    """
-    Ground
-    """
-
-    def __init__(self, walkability: bool = True, swimability: bool = False):
-        super().__init__(walkability=walkability, swimability=swimability)
-
-
-class Water(Surface):
-    """
-    Water
-    """
-
-    def __init__(self, walkability: bool = False, swimability: bool = True):
-        super().__init__(walkability=walkability, swimability=swimability)
-
-
-class ImpassableSurface(Surface):
-    """
-    Impassable surface
-    """
-
-    def __init__(self, walkability: bool = False, swimability: bool = False):
-        super().__init__(walkability=walkability, swimability=swimability)
-
-
-class Shoal(Surface):
-    """
-    Shoal
-    """
-
-    def __init__(self, walkability: bool = True, swimability: bool = True):
-        super().__init__(walkability=walkability, swimability=swimability)
-
-
-class Mud(Ground):
-    """
-    Mud
-    """
-
-    def __init__(self, movement_bonus=0.8):
-        super().__init__()
-        self.movement_bonus = movement_bonus
-
-
-class Path(Ground):
-    """
-    Path
-    """
-
-    def __init__(self, movement_bonus):
-        super().__init__()
-        self.movement_bonus = movement_bonus
-
-
-class Object(Surface):
+class ObjectInterface(Surface):
     """
     Base class for all objects
     """
@@ -81,17 +13,28 @@ class Object(Surface):
         self.area = area
 
 
-class Resource(Object):
+o = ObjectInterface()
+# print(vars(o))
+# print(dir(o))
+
+
+class ResourceInterface(ObjectInterface):
     """
     Resource units
     """
 
-    def __init__(self, area: tuple[int, int] = (1, 1), interaction: bool = True, reserves: int = 0):
-        super().__init__(area, interaction)
+    def __init__(self, reserves: int = 0, type_: str | None = None):
+        super().__init__()
         self.reserves = reserves
+        self.type_ = type_
 
 
-class Unit(Object):
+# r = ResourceInterface()
+# print(vars(r))
+# print(dir(r))
+
+
+class UnitInterface(ObjectInterface):
     """
     Base class for all moving units
     """
@@ -109,24 +52,27 @@ class Unit(Object):
         self.position_y += y
 
 
-class FoodResource(Resource):
+class FoodResource(ResourceInterface):
     """
     Food resource
     """
 
-    def __init__(self, reserves: int, area: tuple[int, int] = (1, 1), unit: Unit = None):
-        super().__init__(reserves=reserves, area=area,)
-        self.type_ = "food"
+    def __init__(self, reserves: int, area: tuple[int, int] = (1, 1), unit: UnitInterface = None):
+        super().__init__()
+        # self.type_ = "food"
         self.unit = unit
 
 
-gold = Resource(1000)
+gold = ResourceInterface(1000)
 fish = FoodResource(reserves=1000, area=(2, 2))
-deer = FoodResource(reserves=100, area=(1, 2), unit=Unit(hp=10))
+deer = FoodResource(reserves=100, area=(1, 2), unit=UnitInterface(hp=10))
 
-print(vars(gold))
+# print(vars(gold))
+# print(dir(gold))
 print(vars(fish))
+print(fish.reserves)
 print(vars(deer))
+print(deer.hp)
 
 # grass = Ground()
 # sand = Ground()
@@ -147,7 +93,7 @@ print(vars(deer))
 # print(vars(a))
 # print(dir(a))
 # # todo zastosować gdzieś kompozycję
-# todo czy klasy takie jak Object nie powinny być abstrakcyjne?
+# todo klasy interface zrobić abstrakcyjne
 
 #
 # print(dir())
