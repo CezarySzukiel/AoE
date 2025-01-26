@@ -6,7 +6,8 @@ class Surface(ABC):
     Surface like ground, or water
     """
 
-    def __init__(self, walkability: bool, swimability: bool, position_x: int | None = None, position_y: int | None = None):
+    def __init__(self, walkability: bool, swimability: bool, position_x: int | None = None,
+                 position_y: int | None = None):
         self.walkability = walkability
         self.swimability = swimability
         self.position_x = position_x

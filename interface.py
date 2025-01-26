@@ -1,99 +1,233 @@
+from abc import abstractmethod, ABC
+
 from surfaces import Surface
 
 
-class ObjectInterface(Surface):
+class SurfaceInterface(ABC):
     """
-    Base class for all objects
+    Interface for all surfaces
     """
 
-    def __init__(self, area: tuple[int, int] = (1, 1), interaction: bool = True,
-                 walkability: bool = False, swimability: bool = False):
-        super().__init__(walkability, swimability)
-        self.interaction = interaction
-        self.area = area
+    @property
+    @abstractmethod
+    def walkability(self) -> bool:
+        """walkability"""
+        pass
+
+    @property
+    @abstractmethod
+    def swimability(self) -> bool:
+        """swimability"""
+        pass
+
+    @abstractmethod
+    def position(self) -> tuple[int, int]:
+        """position"""
+        pass
 
 
-o = ObjectInterface()
-# print(vars(o))
-# print(dir(o))
+class ObjectInterface(SurfaceInterface):
+    """
+    Base interface for all objects
+    """
+
+    @abstractmethod
+    def area(self):
+        pass
+
+    @abstractmethod
+    def interaction(self) -> bool:
+        pass
+
+
+class LifeObjectInterface(ObjectInterface):
+    """
+    Base interface for all living objects
+    """
+
+    @property
+    @abstractmethod
+    def hp(self) -> int:
+        """health points"""
+        pass
+
+    @property
+    @abstractmethod
+    def speed(self) -> float:
+        """speed of object"""
+        pass
+
+    @abstractmethod
+    def take_damage(self, damage: int):
+        """when object is attacked"""
+        pass
+
+
+class MobileObjectInterface(LifeObjectInterface):
+    """
+    Base interface for all mobile objects
+    """
+
+    @abstractmethod
+    def move(self):
+        pass
 
 
 class ResourceInterface(ObjectInterface):
     """
-    Resource units
+    interface for all resources
     """
 
-    def __init__(self, reserves: int = 0, type_: str | None = None):
+    @property
+    @abstractmethod
+    def amount(self) -> int:
+        """amount of resource"""
+        pass
+
+    @property
+    @abstractmethod
+    def resource_type(self) -> str:
+        """type of resource"""
+        pass
+
+    @abstractmethod
+    def get_gathered(self, quantity: int) -> None:
+        """when resource is gathered"""
+        pass
+
+
+class Resource(ResourceInterface):
+    """
+    Resource
+    """
+
+    def __init__(self, position, walkability, swimability, interaction, area, amount, resource_type):
         super().__init__()
-        self.reserves = reserves
-        self.type_ = type_
+        self._position = (0, 0)
+        self._walkability = False
+        self._swimability = False
+        self._interaction = True
+        self._area = area
+        self._amount = amount
+        self._resource_type = "gold"
+
+    @property
+    def position(self):
+        return self._position
+
+    @position.setter
+    def position(self, value: tuple[int, int]):
+        self._position = value
+
+    @property
+    def walkability(self):
+        return self._walkability
+
+    @walkability.setter
+    def walkability(self, value: bool):
+        self._walkability = value
+
+    @property
+    def swimability(self):
+        return self._swimability
+
+    @swimability.setter
+    def swimability(self, value):
+        self._swimability = value
+
+    @property
+    def interaction(self):
+        return self._interaction
+
+    @interaction.setter
+    def interaction(self, value: bool):
+        self._interaction = value
+
+    @property
+    def area(self):
+        return self._area
+
+    @area.setter
+    def area(self, value: tuple[int, int]):
+        self._area = value
+
+    @property
+    def amount(self):
+        return self._amount
+
+    @amount.setter
+    def amount(self, value: int):
+        self._amount = value
+
+    @property
+    def resource_type(self):
+        return self._resource_type
+
+    @resource_type.setter
+    def resource_type(self, value: str):
+        self._resource_type = value
+
+    def get_gathered(self, quantity: int) -> None:
+        gathered = min(quantity, self.amount)
+        self.amount -= gathered
+        print(f"Gathered {gathered} {self.resource_type}")
 
 
-# r = ResourceInterface()
-# print(vars(r))
-# print(dir(r))
-
-
-class UnitInterface(ObjectInterface):
+class LifeObject(LifeObjectInterface):
     """
-    Base class for all moving units
+    Base class for all living objects
     """
 
-    def __init__(self, hp: int):
+    # todo trzeba by implementować ponownie metody które ma już klasa Resource, takie jak position, walkability, swimability, interaction, area. jak to zrobić poprawnie by nie łamać DRY?
+    # todo czy da się w tym celu użyć kompozycji?
+    def __init__(self, hp, speed):
+        self._hp = hp
+        self._speed = speed
+
+    @property
+    def hp(self):
+        return self._hp
+
+    @hp.setter
+    def hp(self, value: int):
+        self._hp = value
+
+    @property
+    def speed(self):
+        return self._speed
+
+    @speed.setter
+    def speed(self, value: float):
+        self._speed = value
+
+    def take_damage(self, damage: int):
+        self.hp -= damage
+        if self.hp <= 0:
+            print("Object destroyed!")
+        return self.hp
+
+
+class Animal(Resource):
+    """
+    All animals who can not fight.
+    (deer, sheep)
+    """
+
+    def __init__(self):
         super().__init__()
-        self.hp = hp
 
-    def run(self, x, y):
-        """
-        Run method
-        """
-        print("I am running")
-        self.position_x += x
-        self.position_y += y
+    # todo dziedziczenie plus kompozycja? resource + lifeObject + mobileObject
+    # czy nie powinienem najpierw zrobić AnimalInterface
 
 
-class FoodResource(ResourceInterface):
-    """
-    Food resource
-    """
+gold = Resource(position=(0, 0), walkability=False, swimability=False, interaction=True, area=(2, 2), amount=800,
+                resource_type="gold")
 
-    def __init__(self, reserves: int, area: tuple[int, int] = (1, 1), unit: UnitInterface = None):
-        super().__init__()
-        # self.type_ = "food"
-        self.unit = unit
-
-
-gold = ResourceInterface(1000)
-fish = FoodResource(reserves=1000, area=(2, 2))
-deer = FoodResource(reserves=100, area=(1, 2), unit=UnitInterface(hp=10))
-
-# print(vars(gold))
-# print(dir(gold))
-print(vars(fish))
-print(fish.reserves)
-print(vars(deer))
-print(deer.hp)
-
-# grass = Ground()
-# sand = Ground()
-# water = Water()
-# mud = Mud()
-#
-# cliff = Object()
-# rock = Object()
-#
-#
-# mud_path = Path(1.2)
-# sand_path = Path(1.4)
-# stone_path = Path(1.6)
-#
-# print(vars(mud_path))
-#
-# a = Mud()
-# print(vars(a))
-# print(dir(a))
+print(vars(gold))
 # # todo zastosować gdzieś kompozycję
 # todo klasy interface zrobić abstrakcyjne
+# todo wilk będzie żołnierzem gracza przyroda, bo nie dało się z niego pozyskiwać jedzenia
+# todo klasa AnimalFighter, bo dzik atakował, poza tym niektóre budynki też atakowały, więc nie fighter osobno
 
 #
 # print(dir())
