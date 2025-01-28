@@ -2,7 +2,7 @@ from interface import *
 
 
 class ObjectComponent(ObjectInterface):
-    def __init__(self, position: tuple[int, int] = [0, 0], area: tuple[int, int] = (1, 1)):
+    def __init__(self, position: tuple[int, int] = (0, 0), area: tuple[int, int] = (1, 1)):
         self._area = area
         self._position = position
 
@@ -185,15 +185,15 @@ class ResourceComponent(InteractableObjectComponent, ResourceInterface):
 class CombatComponent(CombatInterface):
     def __init__(self, damage: int, attack_range: int = 1):
         self._damage = damage
-        self._range = attack_range
+        self._attack_range = attack_range
 
     @property
     def attack_range(self):
-        return self._range
+        return self._attack_range
 
     @attack_range.setter
     def attack_range(self, value):
-        self._range = value
+        self._attack_range = value
 
     @property
     def damage(self):
