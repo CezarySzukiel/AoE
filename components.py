@@ -2,7 +2,7 @@ from interface import *
 
 
 class ObjectComponent(ObjectInterface):
-    def __init__(self, position: list[int, int] = [0, 0], area: tuple[int, int] = (1, 1)):
+    def __init__(self, position: tuple[int, int] = [0, 0], area: tuple[int, int] = (1, 1)):
         self._area = area
         self._position = position
 
@@ -21,6 +21,9 @@ class ObjectComponent(ObjectInterface):
     @area.setter
     def area(self, value):
         self._area = value
+
+    def __str__(self):
+        return f"I am a {self.__class__}. my attrs: {self.__dict__}"
 
 
 class WalkableComponent(ObjectComponent, WalkableInterface):
@@ -130,19 +133,39 @@ class MobileObjectComponent(LifeObjectComponent, MobileObjectInterface):
         print("Object turned")
 
 
+class WalkingObjectComponent(MobileObjectComponent):
+    def __init__(self, speed: int = 1, direction: str = "N"):
+        super().__init__(speed, direction)
+
+    def walk(self, surface, vector: tuple[int, int]):
+        if surface.walkability:
+            self.position = (self.position[0] + vector[0], self.position[1] + vector[1])
+            print(f"Object moved to {self.position}")
+
+
+class SwimmingObjectComponent(MobileObjectComponent):
+    def __init__(self, speed: int = 1, direction: str = "N"):
+        super().__init__(speed, direction)
+
+    def swim(self, surface, vector: tuple[int, int]):
+        if surface.swimability:
+            self.position = (self.position[0] + vector[0], self.position[1] + vector[1])
+            print(f"Object moved to {self.position}")
+
+
 class ResourceComponent(InteractableObjectComponent, ResourceInterface):
     def __init__(self, resource_type: str, amount: int):
         super().__init__()
-        self._amount = amount
+        self._resource_amount = amount
         self._resource_type = resource_type
 
     @property
-    def amount(self):
-        return self._amount
+    def resource_amount(self):
+        return self._resource_amount
 
-    @amount.setter
-    def amount(self, value: int):
-        self._amount = value
+    @resource_amount.setter
+    def resource_amount(self, value: int):
+        self._resource_amount = value
 
     @property
     def resource_type(self):
@@ -153,8 +176,8 @@ class ResourceComponent(InteractableObjectComponent, ResourceInterface):
         self._resource_type = value
 
     def get_gathered(self, amount: int):
-        gathered = min(amount, self.amount)
-        self.amount -= gathered
+        gathered = min(amount, self.resource_amount)
+        self.resource_amount -= gathered
         print(f"Gathered {gathered} {self.resource_type}")
         return gathered
 

@@ -7,7 +7,7 @@ class ObjectInterface(ABC):
     """
 
     @abstractmethod
-    def position(self) -> list[int, int]:
+    def position(self) -> tuple[int, int]:
         pass
 
     @abstractmethod
@@ -17,7 +17,8 @@ class ObjectInterface(ABC):
 
 class WalkableInterface(ObjectInterface):
     """
-    Interface for all walkable objects
+    Interface for all walkable objects.
+    Use this to give units the ability to walk around this object.
     """
 
     @property
@@ -29,7 +30,8 @@ class WalkableInterface(ObjectInterface):
 
 class SwimableInterface(ObjectInterface):
     """
-    Interface for all swimable objects
+    Interface for all swimable objects.
+    Use this to give units the ability to swim around this object.
     """
 
     @property
@@ -132,7 +134,7 @@ class ResourceInterface(ObjectInterface):
 
     @property
     @abstractmethod
-    def amount(self) -> int:
+    def resource_amount(self) -> int:
         """amount of resource"""
         pass
 
